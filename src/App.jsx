@@ -1,40 +1,15 @@
-
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import Layout from './components/Layout';
-// import Trending from './pages/Trending';
-// import Following from './pages/Following';
-// import Search from './pages/Search';
-// import CreatePost from './pages/CreatePost';
-// import UserProfile from './pages/UserProfile';
-
-// function App() {
-//   return (
-//     <Router>
-//       <Routes>
-//         <Route path="/" element={<Layout />}>
-//           <Route index element={<Trending />} />
-//           <Route path="/following" element={<Following />} />
-//           <Route path="/search" element={<Search />} />
-//           <Route path="/create" element={<CreatePost />} />
-//           <Route path="/user/:username" element={<UserProfile />} />
-//         </Route>
-//       </Routes>
-//     </Router>
-//   );
-// }
-
-// export default App;
-
-// src/App.jsx
-// src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Feed from "./pages/RantFeed";
-import PrivateRoute from "./utilities/PrivateRoute";
 import CreateRant from "./pages/CreateRant";
-
+import SetupProfile from "./pages/SetupProfile";
+import Profile from "./pages/Profile";
+import PrivateRoute from "./components/PrivateRoute";
+import Layout from "./components/Layout";
+import Unfiltered from "./pages/Unfiltered"
+import Notifications from "./pages/Notifications";
 
 const HomeRedirect = () => {
   const { user } = useAuth();
@@ -46,25 +21,26 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<HomeRedirect />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/setup-profile" element={<SetupProfile />} />
+
+          {/* Protected Routes with layout */}
           <Route
-            path="/feed"
             element={
               <PrivateRoute>
-                <Feed />
+                <Layout />
               </PrivateRoute>
             }
-          />
-          <Route
-            path="/create"
-            element={
-              <PrivateRoute>
-                <CreateRant />
-              </PrivateRoute>
-            }
-          />
+          >
+            <Route path="/feed" element={<Feed />} />
+            <Route path="/create" element={<CreateRant />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/explore" element={<Unfiltered />} />
+            <Route path="/notifications" element={<Notifications />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
@@ -72,5 +48,3 @@ function App() {
 }
 
 export default App;
-
-

@@ -1,85 +1,70 @@
-// import { Outlet, NavLink } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import BottomNav from "./BottomNav";
+import { FaBars } from "react-icons/fa";
 
-// export default function Layout() {
-//   return (
-//     <div className="min-h-screen bg-gray-100 text-gray-800">
-//       {/* Nav */}
-//       <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-//         <h1 className="text-2xl font-bold text-blue-600">RantSpace</h1>
-//         <div className="space-x-4">
-//           <NavLink
-//             to="/"
-//             className={({ isActive }) =>
-//               isActive
-//                 ? "text-blue-500 font-semibold border-b-2 border-blue-500"
-//                 : "text-gray-600 hover:text-blue-500"
-//             }
-//           >
-//             Home
-//           </NavLink>
-//           <NavLink
-//             to="/trending"
-//             className={({ isActive }) =>
-//               isActive
-//                 ? "text-blue-500 font-semibold border-b-2 border-blue-500"
-//                 : "text-gray-600 hover:text-blue-500"
-//             }
-//           >
-//             Trending
-//           </NavLink>
-//           <NavLink
-//             to="/profile"
-//             className={({ isActive }) =>
-//               isActive
-//                 ? "text-blue-500 font-semibold border-b-2 border-blue-500"
-//                 : "text-gray-600 hover:text-blue-500"
-//             }
-//           >
-//             Profile
-//           </NavLink>
-//         </div>
-//       </nav>
+const Layout = () => {
+  const [showSidebar, setShowSidebar] = useState(false);
+  const sidebarRef = useRef();
 
-//       {/* Page Content */}
-//       <main className="p-4">
-//         <Outlet />
-//       </main>
-//     </div>
-//   );
-// }
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+        setShowSidebar(false);
+      }
+    };
 
-// src/components/Layout.jsx
-import { NavLink, Outlet } from "react-router-dom";
+    if (showSidebar) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
 
-export default function Layout() {
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showSidebar]);
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <header className="bg-white dark:bg-gray-800 shadow">
-        <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">RantVerse</h1>
-          <div className="flex space-x-4">
-            <NavLink to="/" end className={({ isActive }) =>
-              isActive ? "text-blue-600 font-semibold" : "hover:text-blue-500"
-            }>
-              Home
-            </NavLink>
-            <NavLink to="/trending" className={({ isActive }) =>
-              isActive ? "text-blue-600 font-semibold" : "hover:text-blue-500"
-            }>
-              Trending
-            </NavLink>
-            <NavLink to="/profile" className={({ isActive }) =>
-              isActive ? "text-blue-600 font-semibold" : "hover:text-blue-500"
-            }>
-              Profile
-            </NavLink>
-          </div>
-        </nav>
-      </header>
+    <div className="flex min-h-screen bg-red-50 relative">
+      {/* Overlay */}
+      {showSidebar && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-10"
+          onClick={() => setShowSidebar(false)}
+        />
+      )}
 
-      <main className="container mx-auto px-4 py-6 flex-1">
-        <Outlet />
-      </main>
+      {/* Sidebar */}
+      <div
+        ref={sidebarRef}
+        className={`fixed top-0 left-0 h-full w-64 bg-black bg-opacity-90 text-white z-20 transform transition-transform duration-300 ${
+          showSidebar ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <Sidebar onClose={() => setShowSidebar(false)} />
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <div className="hidden md:flex items-center justify-between px-4 py-3 text-red-600 shadow-sm">
+          <button onClick={() => setShowSidebar(true)} className="text-2xl">
+            <FaBars />
+          </button>
+          <h1 className="text-lg font-semibold">RantBox</h1>
+        </div>
+
+        {/* Page content */}
+        <div className="flex-1 p-4">
+          <Outlet />
+        </div>
+
+        <BottomNav />
+      </div>
     </div>
   );
-}
+};
+
+export default Layout;

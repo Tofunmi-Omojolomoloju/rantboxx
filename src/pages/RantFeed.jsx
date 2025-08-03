@@ -3,6 +3,7 @@ import { useState } from "react";
 import RantList from "../components/RantList";
 import { Link } from "react-router-dom";
 
+
 const RantFeed = () => {
   const [activeTab, setActiveTab] = useState("all");
 
@@ -26,9 +27,9 @@ const RantFeed = () => {
 
       <Link
         to="/create"
-        className="fixed bottom-6 right-6 bg-blue-600 text-white px-4 py-2 rounded-full shadow"
+        className=" hidden md:block fixed bottom-6 right-6 bg-red-600 text-white px-4 py-2 rounded-full shadow"
       >
-        + New Rant
+        + Add rant
       </Link>
     </div>
   );
