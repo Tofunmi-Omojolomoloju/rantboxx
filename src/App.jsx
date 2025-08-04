@@ -10,6 +10,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Layout from "./components/Layout";
 import Unfiltered from "./pages/Unfiltered"
 import Notifications from "./pages/Notifications";
+import RantDetail from "./pages/RantDetail";
 
 const HomeRedirect = () => {
   const { user } = useAuth();
@@ -40,6 +41,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/explore" element={<Unfiltered />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/rant/:id" element={<RantDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -3,6 +3,8 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import BottomNav from "./BottomNav";
 import { FaBars } from "react-icons/fa";
+import UserSearch from "./UserSearch";
+
 
 const Layout = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -54,6 +56,7 @@ const Layout = () => {
             <FaBars />
           </button>
           <h1 className="text-lg font-semibold">RantBox</h1>
+          <UserSearch />
         </div>
 
         {/* Page content */}

@@ -23,8 +23,6 @@ const moods = [
   { label: 'Speechless', emoji: '🤐' },
   { label: 'Triggered', emoji: '🚨' },
   { label: 'Low-key angry', emoji: '😠' },
-  { label: 'Triggered', emoji: '🚨' },
-  { label: 'Speechless', emoji: '🤐' },
   { label: 'Disgusted', emoji: '🤢' },          
   { label: 'Shocked', emoji: '😱' },            
   { label: 'Embarrassed', emoji: '😳' },       
@@ -45,25 +43,22 @@ const CreateRant = () => {
     try {
       await addDoc(collection(db, "rants"), {
         userId: user.uid,
-        username: isAnonymous ? "Anonymous" : user.email.split("@")[0],
-        isAnonymous,
+        username: isAnonymous ? "Anonymous" : user?.email?.split("@")[0],
         content,
-          mood: {
+        mood: {
           emoji: mood.emoji,
           label: mood.label,
         },
-
         createdAt: serverTimestamp(),
         likes: 0,
         reshares: 0,
+        comments: [],
+        isAnonymous: isAnonymous,
       });
 
-      // ✅ Clear form
       setContent("");
       setMood(moods[0]);
       setIsAnonymous(false);
-
-      // ✅ Redirect to feed
       navigate("/feed");
     } catch (err) {
       alert("Error posting rant: " + err.message);

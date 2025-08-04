@@ -1,27 +1,52 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase/config";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  setDoc,
+  arrayUnion,
+  arrayRemove,
+  onSnapshot,
+} from "firebase/firestore";
 
 const Profile = () => {
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const user = auth.currentUser;
 
   useEffect(() => {
+    if (!user) return;
+
     const fetchProfile = async () => {
-      if (!user) return;
+      // Fetch user profile info
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
-
       if (docSnap.exists()) {
         const data = docSnap.data();
         setName(data.name || "");
         setBio(data.bio || "");
       }
 
+      // Listen to follower/following changes in real-time
+      const followDocRef = doc(db, "follows", user.uid);
+      const unsubscribe = onSnapshot(followDocRef, (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          setFollowersCount(data.followers?.length || 0);
+          setFollowingCount(data.following?.length || 0);
+        } else {
+          setFollowersCount(0);
+          setFollowingCount(0);
+        }
+      });
+
       setLoading(false);
+      return () => unsubscribe();
     };
 
     fetchProfile();
@@ -49,6 +74,11 @@ const Profile = () => {
         className="w-full max-w-md bg-white p-6 sm:p-8 rounded-lg shadow-md space-y-5"
       >
         <h2 className="text-3xl font-bold text-red-600 text-center">Your Profile</h2>
+
+        <div className="flex justify-between text-gray-700">
+          <p>Followers: <span className="font-semibold">{followersCount}</span></p>
+          <p>Following: <span className="font-semibold">{followingCount}</span></p>
+        </div>
 
         <input
           type="text"
